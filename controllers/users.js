@@ -36,6 +36,9 @@ module.exports.createUser = (req, res) => {
       if (err instanceof mongoose.CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
+      } if (err instanceof mongoose.ValidationError) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
+        return;
       } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
