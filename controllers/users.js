@@ -20,9 +20,9 @@ module.exports.getUserById = (req, res) => {
     .catch((err) => {
       if (err.name === 'NotValidId') {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
-      } else {
-        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+        return;
       }
+      res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -34,9 +34,8 @@ module.exports.createUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'NotValidData') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      } else {
-        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
-      }
+        return;
+      } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -48,11 +47,12 @@ module.exports.updateProfile = (req, res) => {
     .catch((err) => {
       if (err.name === 'NotValidData') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      } else if (err.name === 'NotValidId') {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
-      } else {
-        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+        return;
       }
+      if (err.name === 'NotValidId') {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
+        return;
+      } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -64,10 +64,11 @@ module.exports.updateAvatar = (req, res) => {
     .catch((err) => {
       if (err.name === 'NotValidData') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      } else if (err.name === 'NotValidId') {
+        return;
+      } if (err.name === 'NotValidId') {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
-      } else {
-        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+        return;
       }
+      res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
