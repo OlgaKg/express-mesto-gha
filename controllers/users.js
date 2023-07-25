@@ -15,7 +15,7 @@ module.exports.getUsers = (_req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(new Error('NotValidId'))
+    // .orFail(new Error('NotValidId'))
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
       if (err.name === 'NotValidId') {
@@ -29,7 +29,7 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .orFail(new Error('NotValidData'))
+    // .orFail(new Error('NotValidData'))
     .then((user) => res.status(CREATED_STATUS).send({ data: user }))
     .catch((err) => {
       if (err.name === 'NotValidData') {
@@ -42,9 +42,8 @@ module.exports.createUser = (req, res) => {
 
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
-  // eslint-disable-next-line max-len
   User.findByIdAndUpdate(req.params._id, { name, about }, { new: true }) // возможна ошибка из за id
-    .orFail(new Error('NotValidData'))
+    // .orFail(new Error('NotValidData'))
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
       if (err.name === 'NotValidData') {
@@ -59,8 +58,8 @@ module.exports.updateProfile = (req, res) => {
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.params.userId, { avatar }, { new: true }) // id
-    .orFail(new Error('NotValidData'))
+  User.findByIdAndUpdate(req.params._id, { avatar }, { new: true }) // id
+    // .orFail(new Error('NotValidData'))
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
       if (err.name === 'NotValidData') {
