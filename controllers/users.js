@@ -30,14 +30,14 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    // .orFail(new Error('NotValidData'))
+    .orFail()
     .then((user) => res.status(CREATED_STATUS).send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       } if (err instanceof mongoose.ValidationError) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
+        res.status(ERROR_NOT_FOUND).send({ message: 'Невалидные данные' });
         return;
       } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
@@ -45,7 +45,7 @@ module.exports.createUser = (req, res) => {
 
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.params._id, { name, about }, { new: true }) // возможна ошибка из за id
+  User.findByIdAndUpdate(req.params._id, { name, about }, { new: true })
     // .orFail(new Error('NotValidData'))
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
