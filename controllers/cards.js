@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const Card = require('../models/card');
 const {
   OK_STATUS,
@@ -18,7 +19,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(CREATED_STATUS).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'NotValidData') {
+      if (err instanceof mongoose.CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
@@ -31,7 +32,7 @@ module.exports.deleteCard = (req, res) => {
     // .orFail(new Error('NotValidId'))
     .then((card) => res.status(OK_STATUS).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'NotValidId') {
+      if (err instanceof mongoose.ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточки с таким id нет' });
         return;
       }
@@ -47,10 +48,10 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => res.status(CREATED_STATUS).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'NotValidData') {
+      if (err instanceof mongoose.CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
-      } if (err.name === 'NotValidId') {
+      } if (err instanceof mongoose.ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточки с таким id нет' });
         return;
       }
@@ -66,10 +67,10 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => res.status(CREATED_STATUS).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'NotValidData') {
+      if (err instanceof mongoose.CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
-      } if (err.name === 'NotValidId') {
+      } if (err instanceof mongoose.ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточки с таким id нет' });
         return;
       }

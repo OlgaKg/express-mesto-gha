@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const User = require('../models/user');
 const {
   OK_STATUS,
@@ -18,7 +19,7 @@ module.exports.getUserById = (req, res) => {
     // .orFail(new Error('NotValidId'))
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'NotValidId') {
+      if (err instanceof mongoose.ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
         return;
       }
@@ -32,7 +33,7 @@ module.exports.createUser = (req, res) => {
     // .orFail(new Error('NotValidData'))
     .then((user) => res.status(CREATED_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'NotValidData') {
+      if (err instanceof mongoose.CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -45,11 +46,11 @@ module.exports.updateProfile = (req, res) => {
     // .orFail(new Error('NotValidData'))
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'NotValidData') {
+      if (err instanceof mongoose.CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
-      if (err.name === 'NotValidId') {
+      if (err instanceof mongoose.ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
         return;
       } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -62,10 +63,10 @@ module.exports.updateAvatar = (req, res) => {
     // .orFail(new Error('NotValidData'))
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'NotValidData') {
+      if (err instanceof mongoose.CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
-      } if (err.name === 'NotValidId') {
+      } if (err instanceof mongoose.ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
         return;
       }
