@@ -29,7 +29,6 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    // .orFail(new Error('NotValidId'))
     .then((card) => res.status(OK_STATUS).send({ data: card }))
     .catch((err) => {
       if (err instanceof mongoose.ValidationError) {

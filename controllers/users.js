@@ -16,7 +16,6 @@ module.exports.getUsers = (_req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    // .orFail(new Error('NotValidId'))
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.ValidationError) {
@@ -36,9 +35,6 @@ module.exports.createUser = (req, res) => {
       if (err instanceof mongoose.CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
-      } if (err instanceof mongoose.ValidationError) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Невалидные данные' });
-        return;
       } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
@@ -46,7 +42,6 @@ module.exports.createUser = (req, res) => {
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.params._id, { name, about }, { new: true })
-    // .orFail(new Error('NotValidData'))
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.CastError) {
@@ -62,8 +57,7 @@ module.exports.updateProfile = (req, res) => {
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.params._id, { avatar }, { new: true }) // id
-    // .orFail(new Error('NotValidData'))
+  User.findByIdAndUpdate(req.params._id, { avatar }, { new: true })
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.CastError) {
