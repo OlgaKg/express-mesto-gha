@@ -48,9 +48,16 @@ module.exports.createUser = (req, res) => {
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.params._id, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.status(OK_STATUS).send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
+        return;
+      } if (user) {
+        res.status(OK_STATUS).send({ data: user });
+      }
+    })
     .catch((err) => {
-      if (err instanceof CastError) {
+      if (err instanceof ValidationError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
@@ -63,7 +70,7 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.params._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err instanceof CastError) {
+      if (err instanceof ValidationError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
