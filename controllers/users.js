@@ -50,7 +50,7 @@ module.exports.updateProfile = (req, res) => {
   User.findByIdAndUpdate(req.params._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err instanceof ValidationError && err.kind === 'ObjectId') {
+      if (err instanceof ValidationError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
@@ -63,7 +63,7 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.params._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err instanceof ValidationError && err.kind === 'ObjectId') {
+      if (err instanceof ValidationError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
