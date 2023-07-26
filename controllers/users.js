@@ -53,7 +53,7 @@ module.exports.updateProfile = (req, res) => {
     return;
   }
 
-  User.findByIdAndUpdate(req.params._id, { name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.params.userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
@@ -78,7 +78,7 @@ module.exports.updateAvatar = (req, res) => {
     return;
   }
 
-  User.findByIdAndUpdate(req.params._id, { avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(req.params.userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
