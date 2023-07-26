@@ -29,17 +29,14 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(CREATED_STATUS).send(user))
+    .then((user) => res.status(CREATED_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err instanceof mongoose.ValidationError) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Невалидные данные' });
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
-// { if (err instanceof mongoose.CastError) { //  || err.kind === 'ObjectId'
-//   res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-//   return;
 
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
