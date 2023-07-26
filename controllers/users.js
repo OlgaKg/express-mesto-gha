@@ -2,7 +2,7 @@ const { ValidationError, CastError } = require('mongoose').Error;
 const User = require('../models/user');
 const {
   OK_STATUS,
-  // CREATED_STATUS,
+  CREATED_STATUS,
   ERROR_BAD_REQUEST,
   ERROR_NOT_FOUND,
   ERROR_INTERNAL_SERVER,
@@ -30,6 +30,18 @@ module.exports.getUserById = (req, res) => {
         return;
       }
       res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+    });
+};
+
+module.exports.createUser = (req, res) => {
+  const { name, about, avatar } = req.body;
+  User.create({ name, about, avatar })
+    .then((user) => res.status(CREATED_STATUS).send({ data: user }))
+    .catch((err) => {
+      if (err instanceof ValidationError) {
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        return;
+      } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
