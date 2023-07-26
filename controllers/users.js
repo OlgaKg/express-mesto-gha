@@ -44,7 +44,7 @@ module.exports.createUser = (req, res) => {
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.params._id, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.status(OK_STATUS).send({ data: user ))
+    .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
