@@ -29,7 +29,7 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(CREATED_STATUS).send({ data: user }))
+    .then((user) => res.status(CREATED_STATUS).send(user))
     .catch((err) => {
       if (err instanceof mongoose.ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Невалидные данные' });
@@ -44,7 +44,7 @@ module.exports.createUser = (req, res) => {
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.params._id, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.status(OK_STATUS).send({ data: user }))
+    .then((user) => res.status(OK_STATUS).send({ data: user ))
     .catch((err) => {
       if (err instanceof mongoose.CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
@@ -59,7 +59,7 @@ module.exports.updateProfile = (req, res) => {
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.params._id, { avatar }, { new: true })
+  User.findByIdAndUpdate(req.params._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.CastError) {
