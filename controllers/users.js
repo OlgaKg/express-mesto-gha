@@ -21,7 +21,7 @@ module.exports.getUserById = (req, res) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
         return;
-      } if (err.kind === 'ObjectId') {
+      } if (err.kind === 'ObjectId' || err.name === 'CastError') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
