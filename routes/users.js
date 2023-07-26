@@ -6,7 +6,7 @@ const {
 usersRoutes.get('/', getUsers);
 usersRoutes.get('/:userId', getUserById);
 usersRoutes.post('/', createUser);
-usersRoutes.patch('/me', updateProfile);
-usersRoutes.patch('/me/avatar', updateAvatar);
+usersRoutes.patch('/:userId', updateProfile); // me
+usersRoutes.patch('/:userId/avatar', updateAvatar); // me
 
 module.exports = usersRoutes;
