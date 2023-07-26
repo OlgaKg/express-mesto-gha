@@ -4,13 +4,6 @@ const userRouter = require('./users');
 const cardRouter = require('./cards');
 const { ERROR_NOT_FOUND } = require('../utils/constants');
 
-routes.use('/', (req, _res, next) => {
-  req.user = {
-    _id: '64bc68f10e16c7c7b9f31183',
-  };
-  next();
-});
-
 routes.use('/users', userRouter);
 routes.use('/cards', cardRouter);
 
