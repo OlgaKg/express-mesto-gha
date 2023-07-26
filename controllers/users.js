@@ -47,14 +47,12 @@ module.exports.createUser = (req, res) => {
 
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
+  if (name === undefined || about === undefined) {
+    res.status(ERROR_BAD_REQUEST).send({ message: 'Отсутствуют обязательные поля: name и about' });
+    return;
+  }
   User.findByIdAndUpdate(req.params._id, { name, about }, { new: true, runValidators: true })
-    .then((updatedUser) => {
-      if (!updatedUser) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь не найден' });
-        return;
-      }
-      res.status(OK_STATUS).send({ data: updatedUser });
-    })
+    .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
       if (err instanceof ValidationError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
@@ -66,14 +64,12 @@ module.exports.updateProfile = (req, res) => {
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
+  if (avatar === undefined) {
+    res.status(ERROR_BAD_REQUEST).send({ message: 'Отсутствует обязательное поле: avatar' });
+    return;
+  }
   User.findByIdAndUpdate(req.params._id, { avatar }, { new: true, runValidators: true })
-    .then((updatedUser) => {
-      if (!updatedUser) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь не найден' });
-        return;
-      }
-      res.status(OK_STATUS).send({ data: updatedUser });
-    })
+    .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
       if (err instanceof ValidationError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
