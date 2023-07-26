@@ -18,7 +18,7 @@ module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err instanceof mongoose.ValidationError) {
+      if (err.name === 'ValidationError') {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
         return;
       } if (err.kind === 'ObjectId') {
