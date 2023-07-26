@@ -1,4 +1,4 @@
-const { default: mongoose } = require('mongoose');
+const { ValidationError, CastError } = require('mongoose').Error;
 const Card = require('../models/card');
 const {
   OK_STATUS,
@@ -19,7 +19,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(CREATED_STATUS).send({ data: card }))
     .catch((err) => {
-      if (err instanceof mongoose.CastError) {
+      if (err instanceof ValidationError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
@@ -29,10 +29,17 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => res.status(OK_STATUS).send({ data: card }))
-    .catch((err) => {
-      if (err instanceof mongoose.ValidationError) {
+    .then((card) => {
+      if (!card) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточки с таким id нет' });
+        return;
+      } if (card) {
+        res.status(OK_STATUS).send({ data: card });
+      }
+    })
+    .catch((err) => {
+      if (err instanceof CastError) {
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
       res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -45,13 +52,17 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(CREATED_STATUS).send({ data: card }))
-    .catch((err) => {
-      if (err instanceof mongoose.CastError) {
-        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-        return;
-      } if (err instanceof mongoose.ValidationError) {
+    .then((card) => {
+      if (!card) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточки с таким id нет' });
+        return;
+      } if (card) {
+        res.status(OK_STATUS).send({ data: card });
+      }
+    })
+    .catch((err) => {
+      if (err instanceof CastError) {
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
       res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -64,13 +75,17 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(CREATED_STATUS).send({ data: card }))
-    .catch((err) => {
-      if (err instanceof mongoose.CastError) {
-        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-        return;
-      } if (err instanceof mongoose.ValidationError) {
+    .then((card) => {
+      if (!card) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточки с таким id нет' });
+        return;
+      } if (card) {
+        res.status(OK_STATUS).send({ data: card });
+      }
+    })
+    .catch((err) => {
+      if (err instanceof CastError) {
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
       res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });

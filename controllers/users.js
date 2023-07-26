@@ -1,4 +1,4 @@
-const { default: mongoose } = require('mongoose');
+const { ValidationError, CastError } = require('mongoose').Error;
 const User = require('../models/user');
 const {
   OK_STATUS,
@@ -16,12 +16,16 @@ module.exports.getUsers = (_req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.status(OK_STATUS).send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
+    .then((user) => {
+      if (!user) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
         return;
-      } if (err.kind === 'ObjectId' || err.name === 'CastError') {
+      } if (user) {
+        res.status(OK_STATUS).send({ data: user });
+      }
+    })
+    .catch((err) => {
+      if (err instanceof CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
@@ -34,7 +38,7 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err instanceof ValidationError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -46,11 +50,11 @@ module.exports.updateProfile = (req, res) => {
   User.findByIdAndUpdate(req.params._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err instanceof mongoose.CastError) {
+      if (err instanceof CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
       }
-      if (err instanceof mongoose.ValidationError) {
+      if (err instanceof ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
         return;
       } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -62,10 +66,10 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.params._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err instanceof mongoose.CastError) {
+      if (err instanceof CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
-      } if (err instanceof mongoose.ValidationError) {
+      } if (err instanceof ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
         return;
       }
