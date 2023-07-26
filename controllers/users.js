@@ -53,6 +53,9 @@ module.exports.updateProfile = (req, res) => {
       if (err instanceof ValidationError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
         return;
+      } if (err instanceof CastError) { // new
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
+        return;
       }
       res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
@@ -65,6 +68,9 @@ module.exports.updateAvatar = (req, res) => {
     .catch((err) => {
       if (err instanceof ValidationError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        return;
+      } if (err instanceof CastError) { // new
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
         return;
       }
       res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
