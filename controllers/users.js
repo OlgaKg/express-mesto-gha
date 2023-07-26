@@ -37,10 +37,13 @@ module.exports.createUser = (req, res) => {
       } res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
+// { if (err instanceof mongoose.CastError) { //  || err.kind === 'ObjectId'
+//   res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+//   return;
 
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.params._id, { name, about }, { new: true })
+  User.findByIdAndUpdate(req.params._id, { name, about }, { new: true, runValidators: true })
     .then((user) => res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
       if (err instanceof mongoose.CastError) {
