@@ -21,6 +21,9 @@ module.exports.getUserById = (req, res) => {
       if (err instanceof mongoose.ValidationError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
         return;
+      } if (err.kind === 'ObjectId') {
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        return;
       }
       res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
