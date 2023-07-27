@@ -1,4 +1,3 @@
-// const { 'ValidationError', CastError } = require('mongoose').Error;
 const User = require('../models/user');
 const {
   OK_STATUS,

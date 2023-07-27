@@ -1,4 +1,3 @@
-// const { 'ValidationError', 'CastError' } = require('mongoose').Error;
 const Card = require('../models/card');
 const {
   OK_STATUS,
