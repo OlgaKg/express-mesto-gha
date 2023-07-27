@@ -8,88 +8,89 @@ const {
   ERROR_INTERNAL_SERVER,
 } = require('../utils/constants');
 
-module.exports.getUsers = async (_req, res) => {
-  try {
-    const users = await User.find({});
-    res.status(OK_STATUS).send({ data: users });
-  } catch (error) {
-    res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
-  }
+module.exports.getUsers = (_req, res) => {
+  User.find({})
+    .then((users) => res.status(OK_STATUS).send({ data: users }))
+    .catch(() => res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' }));
 };
 
-module.exports.getUserById = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId);
-    if (!user) {
-      res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
-      return;
-    }
-    res.status(OK_STATUS).send({ data: user });
-  } catch (error) {
-    if (error instanceof CastError) {
-      res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      return;
-    }
-    res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
-  }
+module.exports.getUserById = (req, res) => {
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователя с таким id нет' });
+      } else {
+        res.status(OK_STATUS).send({ data: user });
+      }
+    })
+    .catch((err) => {
+      if (err instanceof CastError) {
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
 
-module.exports.createUser = async (req, res) => {
-  try {
-    const { name, about, avatar } = req.body;
-    const user = await User.create({ name, about, avatar });
-    res.status(CREATED_STATUS).send({ data: user });
-  } catch (error) {
-    if (error instanceof ValidationError) {
-      res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      return;
-    }
-    res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
-  }
+module.exports.createUser = (req, res) => {
+  const { name, about, avatar } = req.body;
+  User.create({ name, about, avatar })
+    .then((user) => res.status(CREATED_STATUS).send({ data: user }))
+    .catch((err) => {
+      if (err instanceof ValidationError) {
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
 
-module.exports.updateProfile = async (req, res) => {
-  try {
-    const { name, about } = req.body;
-    if (!name || !about) {
-      res.status(ERROR_BAD_REQUEST).send({ message: 'Отсутствуют обязательные поля: name и about' });
-      return;
-    }
+module.exports.updateProfile = (req, res) => {
+  const { name, about } = req.body;
 
-    const user = await User.findByIdAndUpdate(
-      req.params.userId,
-      { name, about },
-      { new: true, runValidators: true },
-    );
-    if (!user) {
-      res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
-      return;
-    }
-    res.status(OK_STATUS).send({ data: user });
-  } catch (error) {
-    res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+  if (!name || !about) {
+    res.status(ERROR_BAD_REQUEST).send({ message: 'Отсутствуют обязательные поля: name и about' });
+    return;
   }
+
+  User.findByIdAndUpdate(req.params._id, { name, about }, { new: true, runValidators: true })
+    .then((user) => {
+      if (!user) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
+      } else {
+        res.status(OK_STATUS).send({ data: user });
+      }
+    })
+    .catch((err) => {
+      if (err instanceof ValidationError) {
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };
 
-module.exports.updateAvatar = async (req, res) => {
-  try {
-    const { avatar } = req.body;
-    if (!avatar) {
-      res.status(ERROR_BAD_REQUEST).send({ message: 'Отсутствует обязательное поле: avatar' });
-      return;
-    }
+module.exports.updateAvatar = (req, res) => {
+  const { avatar } = req.body;
 
-    const user = await User.findByIdAndUpdate(
-      req.params.userId,
-      { avatar },
-      { new: true, runValidators: true },
-    );
-    if (!user) {
-      res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
-      return;
-    }
-    res.status(OK_STATUS).send({ data: user });
-  } catch (error) {
-    res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+  if (!avatar) {
+    res.status(ERROR_BAD_REQUEST).send({ message: 'Отсутствует обязательное поле: avatar' });
+    return;
   }
+
+  User.findByIdAndUpdate(req.params._id, { avatar }, { new: true, runValidators: true })
+    .then((user) => {
+      if (!user) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с таким id не найден' });
+      } else {
+        res.status(OK_STATUS).send({ data: user });
+      }
+    })
+    .catch((err) => {
+      if (err instanceof ValidationError) {
+        res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+      }
+    });
 };

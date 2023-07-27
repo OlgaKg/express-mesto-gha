@@ -21,9 +21,9 @@ module.exports.createCard = (req, res) => {
     .catch((err) => {
       if (err instanceof ValidationError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-        return;
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
       }
-      res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -32,17 +32,16 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => {
       if (!card) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточки с таким id нет' });
-        return;
-      } if (card) {
+      } else {
         res.status(OK_STATUS).send({ data: card });
       }
     })
     .catch((err) => {
       if (err instanceof CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-        return;
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
       }
-      res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -55,17 +54,16 @@ module.exports.likeCard = (req, res) => {
     .then((card) => {
       if (!card) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточки с таким id нет' });
-        return;
-      } if (card) {
+      } else {
         res.status(OK_STATUS).send({ data: card });
       }
     })
     .catch((err) => {
       if (err instanceof CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-        return;
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
       }
-      res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -78,16 +76,15 @@ module.exports.dislikeCard = (req, res) => {
     .then((card) => {
       if (!card) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточки с таким id нет' });
-        return;
-      } if (card) {
+      } else {
         res.status(OK_STATUS).send({ data: card });
       }
     })
     .catch((err) => {
       if (err instanceof CastError) {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-        return;
+      } else {
+        res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
       }
-      res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
     });
 };
