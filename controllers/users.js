@@ -48,7 +48,7 @@ module.exports.createUser = (req, res) => {
 module.exports.updateProfile = (req, res) => {
   const { name, about } = req.body;
 
-  if (!name || !about) {
+  if (!name || name === '' || !about || about === '') {
     res.status(ERROR_BAD_REQUEST).send({ message: 'Отсутствуют обязательные поля: name и about' });
     return;
   }
@@ -73,7 +73,7 @@ module.exports.updateProfile = (req, res) => {
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
-  if (!avatar) {
+  if (!avatar || avatar === '') {
     res.status(ERROR_BAD_REQUEST).send({ message: 'Отсутствует обязательное поле: avatar' });
     return;
   }
