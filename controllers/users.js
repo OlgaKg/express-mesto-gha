@@ -1,4 +1,4 @@
-const { ValidationError, CastError } = require('mongoose').Error;
+// const { 'ValidationError', CastError } = require('mongoose').Error;
 const User = require('../models/user');
 const {
   OK_STATUS,
@@ -24,7 +24,7 @@ module.exports.getUserById = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err instanceof CastError) {
+      if (err.name === 'CastError') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -37,7 +37,7 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(CREATED_STATUS).send({ data: user }))
     .catch((err) => {
-      if (err instanceof ValidationError) {
+      if (err.name === 'ValidationError') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -62,7 +62,7 @@ module.exports.updateProfile = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err instanceof ValidationError) {
+      if (err.name === 'ValidationError') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -87,7 +87,7 @@ module.exports.updateAvatar = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err instanceof ValidationError) {
+      if (err.name === 'ValidationError') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });

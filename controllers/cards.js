@@ -1,4 +1,4 @@
-const { ValidationError, CastError } = require('mongoose').Error;
+// const { 'ValidationError', 'CastError' } = require('mongoose').Error;
 const Card = require('../models/card');
 const {
   OK_STATUS,
@@ -19,7 +19,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(CREATED_STATUS).send({ data: card }))
     .catch((err) => {
-      if (err instanceof ValidationError) {
+      if (err.name === 'ValidationError') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -37,7 +37,7 @@ module.exports.deleteCard = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err instanceof CastError) {
+      if (err.name === 'CastError') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -59,7 +59,7 @@ module.exports.likeCard = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err instanceof CastError) {
+      if (err.name === 'CastError') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
@@ -81,7 +81,7 @@ module.exports.dislikeCard = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err instanceof CastError) {
+      if (err.name === 'CastError') {
         res.status(ERROR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
