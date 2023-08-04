@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const BadRequestError = require('../utils/errors/BadRequestError');
-const InternalServerError = require('../utils/errors/InternalServerError');
+// const InternalServerError = require('../utils/errors/InternalServerError');
 const ConflictError = require('../utils/errors/ConflictError');
 const UnauthorizedError = require('../utils/errors/UnauthorizedError');
 const {
@@ -126,7 +126,7 @@ module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        next(new InternalServerError('Пользователь не найден'));
+        next(new NotFoundError('Пользователь не найден'));
       } else {
         res.status(OK_STATUS).send({ data: user });
       }
