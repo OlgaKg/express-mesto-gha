@@ -4,12 +4,12 @@ const {
 } = require('../controllers/users');
 const authMiddleware = require('../middlewares/auth');
 const {
-  loginAndCreateUserValidator, userIdValidator, updateProfileValidator,
+  loginValidator, createUserValidator, userIdValidator, updateProfileValidator,
   updateAvatarValidator,
 } = require('../middlewares/userValidator');
 
-usersRoutes.post('/signin', loginAndCreateUserValidator, login);
-usersRoutes.post('/signup', loginAndCreateUserValidator, createUser);
+usersRoutes.post('/signin', loginValidator, login);
+usersRoutes.post('/signup', createUserValidator, createUser);
 
 usersRoutes.use(authMiddleware);
 
