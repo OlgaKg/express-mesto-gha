@@ -35,17 +35,6 @@ module.exports.getUserById = (req, res, next) => {
     });
 };
 
-module.exports.getCurrentUser = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        next(new InternalServerError('Пользователь не найден'));
-      }
-      res.status(OK_STATUS).send({ data: user });
-    })
-    .catch(next);
-};
-
 module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email,
@@ -54,7 +43,7 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.status(CREATED_STATUS).send({ data: user })) // возможно тут нужно поменять
+    .then((user) => res.status(CREATED_STATUS).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
@@ -63,25 +52,6 @@ module.exports.createUser = (req, res, next) => {
       } else {
         next(err);
       }
-    });
-};
-
-module.exports.login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' }); // возиожно сюда нужен  id
-      res.cookie('jwt', token, {
-        // token - наш JWT токен, который мы отправляем
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        sameSite: true,
-      });
-      res.status(OK_STATUS).send({ token }); // доделать мб
-    })
-    .catch(() => {
-      next(new UnauthorizedError('Неправильные почта или пароль'));
     });
 };
 
@@ -131,4 +101,34 @@ module.exports.updateAvatar = (req, res, next) => {
         next(err);
       }
     });
+};
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
+      res.cookie('jwt', token, {
+        // token - наш JWT токен, который мы отправляем
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        sameSite: true,
+      });
+      res.status(OK_STATUS).send({ token });
+    })
+    .catch(() => {
+      next(new UnauthorizedError('Неправильные почта или пароль'));
+    });
+};
+
+module.exports.getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        next(new InternalServerError('Пользователь не найден'));
+      }
+      res.status(OK_STATUS).send({ data: user });
+    })
+    .catch(next);
 };

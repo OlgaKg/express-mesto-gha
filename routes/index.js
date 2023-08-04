@@ -1,8 +1,11 @@
 const routes = require('express').Router();
 const { errors } = require('celebrate');
+const cookieParser = require('cookie-parser');
 const userRouter = require('./users');
 const cardRouter = require('./cards');
 const NotFoundError = require('../utils/errors/NotFoundError');
+
+routes.use(cookieParser());
 
 routes.use('/users', userRouter);
 routes.use('/cards', cardRouter);
