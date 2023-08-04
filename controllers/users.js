@@ -127,8 +127,9 @@ module.exports.getCurrentUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         next(new InternalServerError('Пользователь не найден'));
+      } else {
+        res.status(OK_STATUS).send({ data: user });
       }
-      res.status(OK_STATUS).send({ data: user });
     })
     .catch(next);
 };
