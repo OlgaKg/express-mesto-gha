@@ -110,7 +110,6 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
       res.cookie('jwt', token, {
-        // token - наш JWT токен, который мы отправляем
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: true,
@@ -131,5 +130,11 @@ module.exports.getCurrentUser = (req, res, next) => {
         res.status(OK_STATUS).send({ data: user });
       }
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные'));
+      } else {
+        next(err);
+      }
+    });
 };

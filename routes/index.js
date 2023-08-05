@@ -11,10 +11,10 @@ const {
   login, createUser,
 } = require('../controllers/users');
 
-routes.use(cookieParser());
-
 routes.post('/signin', loginValidator, login);
 routes.post('/signup', createUserValidator, createUser);
+
+routes.use(cookieParser());
 routes.use('/users', userRouter);
 routes.use('/cards', cardRouter);
 
