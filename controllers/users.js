@@ -43,12 +43,16 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.status(CREATED_STATUS).send({ data: user }))
+    .then(() => res.status(CREATED_STATUS).send({
+      data: {
+        name, about, avatar, email,
+      },
+    }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные'));
-      } else if (err.name === 'MongoError' && err.code === 11000) {
+      if (err.name === 'MongoError' && err.code === 11000) {
         next(new ConflictError('Пользователь с таким email уже существует'));
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
       }
