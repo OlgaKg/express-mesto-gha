@@ -1,5 +1,5 @@
 const usersRoutes = require('express').Router();
-const authMiddleware = require('../middlewares/auth');
+// const authMiddleware = require('../middlewares/auth');
 const {
   userIdValidator, updateProfileValidator,
   updateAvatarValidator,
@@ -11,7 +11,7 @@ const {
 // usersRoutes.post('/signin', loginValidator, login);
 // usersRoutes.post('/signup', createUserValidator, createUser);
 
-usersRoutes.use(authMiddleware);
+// usersRoutes.use(authMiddleware);
 
 usersRoutes.get('/', getUsers);
 usersRoutes.get('/me', getCurrentUser);
