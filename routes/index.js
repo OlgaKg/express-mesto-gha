@@ -1,9 +1,8 @@
 const routes = require('express').Router();
-const { errors } = require('celebrate');
-const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 const userRouter = require('./users');
 const cardRouter = require('./cards');
-const authMiddleware = require('../middlewares/auth'); // new
+const authMiddleware = require('../middlewares/auth');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const {
   loginValidator, createUserValidator,
@@ -15,26 +14,13 @@ const {
 routes.post('/signin', loginValidator, login);
 routes.post('/signup', createUserValidator, createUser);
 
-routes.use(cookieParser());
+// routes.use(cookieParser());
 routes.use(authMiddleware);
 routes.use('/users', userRouter);
 routes.use('/cards', cardRouter);
 
 routes.use('*', (req, res, next) => {
   next(new NotFoundError(`Ресурс по данному адресу ${req.path} не найден`));
-});
-
-routes.use(errors());
-
-routes.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res.status(statusCode)
-    .send({
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-  next();
 });
 
 module.exports = routes;

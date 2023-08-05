@@ -8,11 +8,6 @@ const {
   getUsers, getUserById, updateProfile, updateAvatar, getCurrentUser,
 } = require('../controllers/users');
 
-// usersRoutes.post('/signin', loginValidator, login);
-// usersRoutes.post('/signup', createUserValidator, createUser);
-
-// usersRoutes.use(authMiddleware);
-
 usersRoutes.get('/', getUsers);
 usersRoutes.get('/me', getCurrentUser);
 usersRoutes.get('/:userId', userIdValidator, getUserById);
