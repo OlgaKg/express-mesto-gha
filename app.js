@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const routes = require('./routes/index');
-const INTERNAL_SERVER_ERROR = require('./utils/constants');
+const { INTERNAL_SERVER_ERROR } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
