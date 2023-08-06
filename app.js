@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const routes = require('./routes/index');
 const { INTERNAL_SERVER_ERROR } = require('./utils/constants');
+const config = require('./config');
 
-const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(express.json());
@@ -22,11 +22,11 @@ routes.use((err, req, res, next) => {
   next();
 });
 
-mongoose.connect('mongodb://localhost:27017/mestodb', {
+mongoose.connect(config.mongodbURI, {
   useNewUrlParser: true,
 });
 
-app.listen(PORT, () => {
+app.listen(config.port, () => {
   // eslint-disable-next-line no-console
-  console.log(`App listening on port ${PORT}`);
+  console.log(`App listening on port ${config.port}`);
 });

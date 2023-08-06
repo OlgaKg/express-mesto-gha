@@ -34,38 +34,6 @@ module.exports.getUserById = (req, res, next) => {
     });
 };
 
-// module.exports.createUser = (req, res, next) => {
-//   const {
-//     name, about, avatar, email,
-//   } = req.body;
-//   console.log('Creating user:', req.body);
-//   bcrypt.hash(req.body.password, 10)
-//     .then((hash) => User.create({
-//       name, about, avatar, email, password: hash,
-//     }))
-//     .then(() => {
-//       console.log('User created successfully');
-//       res.status(CREATED_STATUS).send({
-//         data: {
-//           name, about, avatar, email,
-//         },
-//       });
-//     })
-//     .catch((err) => {
-//       console.error('Error creating user:', err);
-//       if (err.name === 'MongoError' && err.code === 11000) {
-//         console.log('User with the same email already exists');
-//         next(new ConflictError('Пользователь с таким email уже существует'));
-//       } else if (err.name === 'ValidationError') {
-//         console.log('Validation Error:', err);
-//         next(new BadRequestError('Переданы некорректные данные'));
-//       } else {
-//         console.log('Other Error:', err);
-//         next(err);
-//       }
-//     });
-// };
-
 module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email,
