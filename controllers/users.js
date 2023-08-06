@@ -4,15 +4,14 @@ const User = require('../models/user');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const BadRequestError = require('../utils/errors/BadRequestError');
 const ConflictError = require('../utils/errors/ConflictError');
-const UnauthorizedError = require('../utils/errors/UnauthorizedError');
+// const UnauthorizedError = require('../utils/errors/UnauthorizedError');
 const {
-  OK_STATUS,
   CREATED_STATUS,
 } = require('../utils/constants');
 
 module.exports.getUsers = (_req, res, next) => {
   User.find({})
-    .then((users) => res.status(OK_STATUS).send({ data: users }))
+    .then((users) => res.send({ data: users }))
     .catch(next);
 };
 
@@ -22,7 +21,7 @@ module.exports.getUserById = (req, res, next) => {
       if (!user) {
         next(new NotFoundError('Пользователя с таким id нет'));
       } else {
-        res.status(OK_STATUS).send({ data: user });
+        res.send({ data: user });
       }
     })
     .catch((err) => {
@@ -39,13 +38,7 @@ module.exports.createUser = (req, res, next) => {
     name, about, avatar, email,
   } = req.body;
 
-  User.findOne({ email })
-    .then((existingUser) => {
-      if (existingUser) {
-        return Promise.reject(new ConflictError('Пользователь с таким email уже существует'));
-      }
-      return bcrypt.hash(req.body.password, 10);
-    })
+  bcrypt.hash(req.body.password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
@@ -57,7 +50,9 @@ module.exports.createUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'MongoError' && err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует'));
+      } else if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(err);
@@ -68,16 +63,12 @@ module.exports.createUser = (req, res, next) => {
 module.exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;
 
-  if (!name || name === '' || !about || about === '') {
-    next(new BadRequestError('Отсутствуют обязательные поля: name и about'));
-  }
-
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         next(new NotFoundError('Пользователь с таким id не найден'));
       } else {
-        res.status(OK_STATUS).send({ data: user });
+        res.send({ data: user });
       }
     })
     .catch((err) => {
@@ -92,16 +83,12 @@ module.exports.updateProfile = (req, res, next) => {
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
-  if (!avatar || avatar === '') {
-    next(new BadRequestError('Отсутствует обязательное поле: avatar'));
-  }
-
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         next(new NotFoundError('Пользователь с таким id не найден'));
       } else {
-        res.status(OK_STATUS).send({ data: user });
+        res.send({ data: user });
       }
     })
     .catch((err) => {
@@ -124,11 +111,9 @@ module.exports.login = (req, res, next) => {
         httpOnly: true,
         sameSite: true,
       });
-      res.status(OK_STATUS).send({ token });
+      res.send({ token });
     })
-    .catch(() => {
-      next(new UnauthorizedError('Неправильные почта или пароль'));
-    });
+    .catch(next);
 };
 
 module.exports.getCurrentUser = (req, res, next) => {
@@ -137,7 +122,7 @@ module.exports.getCurrentUser = (req, res, next) => {
       if (!user) {
         next(new NotFoundError('Пользователь не найден'));
       } else {
-        res.status(OK_STATUS).send({ data: user });
+        res.send({ data: user });
       }
     })
     .catch((err) => {

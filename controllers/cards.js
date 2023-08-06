@@ -3,13 +3,12 @@ const NotFoundError = require('../utils/errors/NotFoundError');
 const BadRequestError = require('../utils/errors/BadRequestError');
 const ForbiddenError = require('../utils/errors/ForbiddenError');
 const {
-  OK_STATUS,
   CREATED_STATUS,
 } = require('../utils/constants');
 
 module.exports.getCards = (_req, res, next) => {
   Card.find({})
-    .then((cards) => res.status(OK_STATUS).send({ data: cards }))
+    .then((cards) => res.send({ data: cards }))
     .catch(next);
 };
 
@@ -40,7 +39,7 @@ module.exports.deleteCard = (req, res, next) => {
           if (!removedCard) {
             next(new NotFoundError('Карточки с таким id нет'));
           }
-          res.status(OK_STATUS).send({ data: removedCard });
+          res.send({ data: removedCard });
         });
     })
     .catch((err) => {
@@ -62,7 +61,7 @@ module.exports.likeCard = (req, res, next) => {
       if (!card) {
         next(new NotFoundError('Карточки с таким id нет'));
       } else {
-        res.status(OK_STATUS).send({ data: card });
+        res.send({ data: card });
       }
     })
     .catch((err) => {
@@ -84,7 +83,7 @@ module.exports.dislikeCard = (req, res, next) => {
       if (!card) {
         next(new NotFoundError('Карточки с таким id нет'));
       } else {
-        res.status(OK_STATUS).send({ data: card });
+        res.send({ data: card });
       }
     })
     .catch((err) => {

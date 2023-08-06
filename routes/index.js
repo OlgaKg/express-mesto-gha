@@ -1,5 +1,4 @@
 const routes = require('express').Router();
-const cookieParser = require('cookie-parser');
 const userRouter = require('./users');
 const cardRouter = require('./cards');
 const authMiddleware = require('../middlewares/auth');
@@ -14,7 +13,6 @@ const {
 routes.post('/signin', loginValidator, login);
 routes.post('/signup', createUserValidator, createUser);
 
-routes.use(cookieParser());
 routes.use(authMiddleware);
 routes.use('/users', userRouter);
 routes.use('/cards', cardRouter);
