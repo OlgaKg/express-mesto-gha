@@ -34,14 +34,18 @@ module.exports.getUserById = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password,
+    name, about, avatar, email,
   } = req.body;
   bcrypt
-    .hash(password, 10)
+    .hash(req.body.password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((data) => res.status(CREATED_STATUS).send(data))
+    .then(() => res.status(CREATED_STATUS).send({
+      data: {
+        name, about, avatar, email,
+      },
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(
