@@ -8,7 +8,7 @@ const {
 } = require('../middlewares/userValidator');
 const {
   login, createUser,
-} = require('../controllers/users');
+} = require('../controllers/userController');
 
 routes.post('/signin', loginValidator, login);
 routes.post('/signup', createUserValidator, createUser);

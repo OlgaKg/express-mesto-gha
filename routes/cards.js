@@ -4,7 +4,7 @@ const {
 } = require('../middlewares/cardValidator');
 const {
   getCards, createCard, deleteCard, likeCard, dislikeCard,
-} = require('../controllers/cards');
+} = require('../controllers/cardController');
 
 cardsRoutes.get('/', getCards);
 cardsRoutes.post('/', createCardValidator, createCard);

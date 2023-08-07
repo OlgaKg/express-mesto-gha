@@ -1,12 +1,11 @@
 const usersRoutes = require('express').Router();
-// const authMiddleware = require('../middlewares/auth');
 const {
   userIdValidator, updateProfileValidator,
   updateAvatarValidator,
 } = require('../middlewares/userValidator');
 const {
   getUsers, getUserById, updateProfile, updateAvatar, getCurrentUser,
-} = require('../controllers/users');
+} = require('../controllers/userController');
 
 usersRoutes.get('/', getUsers);
 usersRoutes.get('/me', getCurrentUser);
