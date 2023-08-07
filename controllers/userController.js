@@ -4,7 +4,6 @@ const User = require('../models/user');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const BadRequestError = require('../utils/errors/BadRequestError');
 const ConflictError = require('../utils/errors/ConflictError');
-// const UnauthorizedError = require('../utils/errors/UnauthorizedError');
 const {
   CREATED_STATUS,
 } = require('../utils/constants');
@@ -37,23 +36,23 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email,
   } = req.body;
-
-  bcrypt.hash(req.body.password, 10)
+  bcrypt
+    .hash(req.body.password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then(() => {
-      res.status(CREATED_STATUS).send({
-        data: {
-          name, about, avatar, email,
-        },
-      });
-    })
+    .then((data) => res.status(CREATED_STATUS).send(data))
     .catch((err) => {
-      if (err.name === 'MongoError' && err.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже существует'));
-      } else if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные'));
+      if (err.name === 'ValidationError') {
+        next(
+          new BadRequestError(
+            `${Object.values(err.errors)
+              .map((error) => error.message)
+              .join(', ')}`,
+          ),
+        );
+      } else if (err.code === 11000) {
+        next(new ConflictError('Пользователь с данным email уже существует'));
       } else {
         next(err);
       }

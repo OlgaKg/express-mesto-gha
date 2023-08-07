@@ -4,11 +4,11 @@ const cardRouter = require('./cards');
 const authMiddleware = require('../middlewares/auth');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const {
-  loginValidator, createUserValidator,
-} = require('../middlewares/userValidator');
-const {
   login, createUser,
 } = require('../controllers/userController');
+const {
+  loginValidator, createUserValidator,
+} = require('../middlewares/userValidator');
 
 routes.post('/signin', loginValidator, login);
 routes.post('/signup', createUserValidator, createUser);
