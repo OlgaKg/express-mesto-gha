@@ -136,3 +136,7 @@ module.exports.getCurrentUser = (req, res, next) => {
       }
     });
 };
+
+module.exports.logout = (req, res) => {
+  res.clearCookie('jwt').send({ message: 'Выход' });
+};

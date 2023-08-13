@@ -4,7 +4,7 @@ const cardRouter = require('./cards');
 const authMiddleware = require('../middlewares/auth');
 const NotFoundError = require('../utils/errors/NotFoundError');
 const {
-  login, createUser,
+  login, createUser, logout,
 } = require('../controllers/userController');
 const {
   loginValidator, createUserValidator,
@@ -12,6 +12,7 @@ const {
 
 routes.post('/signin', loginValidator, login);
 routes.post('/signup', createUserValidator, createUser);
+routes.get('/signout', logout);
 
 routes.use(authMiddleware);
 routes.use('/users', userRouter);
